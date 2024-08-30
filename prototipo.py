@@ -1,13 +1,12 @@
-#ana
 import datetime
 from enum import Enum
 
 class EstadoEnvio(Enum):
     RECIBIDO = "Recibimos tu envío"
-    EN_TRANSITO_AEREO = "En reparto aéreo"
-    EN_TRANSITO_TERRESTRE = "Viajando a tu destino"
+    EN_REPARTO_AEREO = "En reparto aéreo"
+    VIAJANDO_A_TU_DESTINO = "Viajando a tu destino"
     EN_CENTRO_LOGISTICO = "En centro logístico (bodega)"
-    EN_CAMINO = "En camino hacia ti"
+    EN_CAMINO_HACIA_TI = "En camino hacia ti"
     ENTREGADO = "Entregado"
 
 class Rol(Enum):
@@ -58,13 +57,14 @@ class Envio:
         self.hora_entrega = hora_entrega
         self.transportista = transportista
         self.estado_actual = EstadoEnvio.RECIBIDO
-        self.historial_estados = [CambioEstado(EstadoEnvio.RECIBIDO, datetime.datetime.now(), "Centro de distribución")]
         self.ubicacion_actual = "Centro de distribución"
 
     def actualizar_estado(self, nuevo_estado, ubicacion):
         self.estado_actual = nuevo_estado
         self.ubicacion_actual = ubicacion
-        self.historial_estados.append(CambioEstado(nuevo_estado, datetime.datetime.now(), ubicacion))
+        
+    def asignar_transportista(self, transportista):
+        self.transportista = transportista
 
 class SistemaSeguimiento:
     def __init__(self):
@@ -111,14 +111,26 @@ class SistemaSeguimiento:
 def menu_cliente(sistema, cliente):
     while True:
         print("\n--- Menú Cliente ---")
-        print("1. Ver estado de un envío")
-        print("2. Salir")
+        print("1. Ver mis pedidos")
+        print("2. Ver estado de un envío")
+        print("3. Ver historial de un envío")
+        print("4. Salir")
         opcion = input("Seleccione una opción: ")
         
         if opcion == "1":
+            pass
+        elif opcion == "2" or opcion == "3":
             id_job = input("Ingrese el ID del envío: ")
-            print(sistema.obtener_info_envio(id_job))
-        elif opcion == "2":
+            if id_job in sistema.envios:
+                pass
+            else:
+                print(f'No se ha encontrado ningún envío con el {id_job}')
+                break
+            if opcion == "2":
+                print(sistema.obtener_info_envio(id_job))
+            else:
+                pass
+        elif opcion == "4":
             break
         else:
             print("Opción no válida")
@@ -127,13 +139,22 @@ def menu_destinatario(sistema):
     while True:
         print("\n--- Menú Destinatario ---")
         print("1. Ver estado de un envío")
-        print("2. Salir")
+        print("2. Ver historial de un envío")
+        print("3. Salir")
         opcion = input("Seleccione una opción: ")
         
-        if opcion == "1":
+        if opcion == "1" or opcion == "2":
             id_job = input("Ingrese el ID del envío: ")
-            print(sistema.obtener_info_envio(id_job))
-        elif opcion == "2":
+            if id_job in sistema.envios:
+                pass
+            else:
+                print(f'No se ha encontrado ningún envío con el {id_job}')
+                break
+            if opcion == "1":
+                print(sistema.obtener_info_envio(id_job))
+            else:
+                pass
+        elif opcion == "3":
             break
         else:
             print("Opción no válida")
@@ -142,18 +163,42 @@ def menu_transportista(sistema, transportista):
     while True:
         print("\n--- Menú Transportista ---")
         print("1. Editar estado del envío")
-        print("2. Salir")
+        print("2. Ver información del envío")
+        print("3. Salir")
         opcion = input("Seleccione una opción: ")
         
         if opcion == "1":
             id_job = input("Ingrese el ID del envío: ")
-            nuevo_estado = input("Ingrese el nuevo estado (RECIBIDO, EN_REPARTO_AEREO, VIAJANDO_A_TU_DESTINO, EN_CENTRO_LOGISTICO, EN_CAMINO_HACIA_TI, ENTREGADO): ")
+            if id_job in sistema.envios:
+                pass
+            else:
+                print(f'No se ha encontrado ningún envío con el {id_job}')
+                break
+            nuevo_estado = input("Ingrese el nuevo estado (RECIBIDO, EN_REPARTO_AEREO, VIAJANDO_A_TU_DESTINO, EN_CENTRO_LOGISTICO, EN_CAMINO_HACIA_TI, ENTREGADO): ") 
+            if nuevo_estado == "RECIBIDO":
+                pass
+            elif nuevo_estado == "EN_REPARTO_AEREO":
+                pass
+            elif nuevo_estado == "VIAJANDO_A_TU_DESTINO":
+                pass
+            elif nuevo_estado == "EN_CENTRO_LOGISTICO":
+                pass
+            elif nuevo_estado == "EN_CAMINO_HACIA_TI":
+                pass
+            elif nuevo_estado == "ENTREGADO":
+                pass
+            else:
+                print("Estado no válido")
+                continue
+            
             ubicacion = input("Ingrese la ubicación actual: ")
             if sistema.actualizar_estado_envio(id_job, EstadoEnvio[nuevo_estado], ubicacion):
                 print("Estado actualizado con éxito")
             else:
                 print("No se pudo actualizar el estado")
         elif opcion == "2":
+            pass
+        elif opcion == "3":
             break
         else:
             print("Opción no válida")
@@ -161,11 +206,48 @@ def menu_transportista(sistema, transportista):
 def menu_logistica(sistema):
     while True:
         print("\n--- Menú Logística ---")
-        print("1. Agregar empleado")
-        print("2. Salir")
+        print("1. Editar estado del envío")
+        print("2. Modificar datos de envío")
+        print("3. Ver información del envío")
+        print("4. Agregar empleado")
+        print("5. Salir")
         opcion = input("Seleccione una opción: ")
-        
+
+
         if opcion == "1":
+            id_job = input("Ingrese el ID del envío: ")
+            if id_job in sistema.envios:
+                pass
+            else:
+                print(f'No se ha encontrado ningún envío con el {id_job}')
+                break
+            nuevo_estado = input("Ingrese el nuevo estado (RECIBIDO, EN_REPARTO_AEREO, VIAJANDO_A_TU_DESTINO, EN_CENTRO_LOGISTICO, EN_CAMINO_HACIA_TI, ENTREGADO): ") 
+            if nuevo_estado == "RECIBIDO":
+                pass
+            elif nuevo_estado == "EN_REPARTO_AEREO":
+                pass
+            elif nuevo_estado == "VIAJANDO_A_TU_DESTINO":
+                pass
+            elif nuevo_estado == "EN_CENTRO_LOGISTICO":
+                pass
+            elif nuevo_estado == "EN_CAMINO_HACIA_TI":
+                pass
+            elif nuevo_estado == "ENTREGADO":
+                pass
+            else:
+                print("Estado no válido")
+                continue
+            ubicacion = input("Ingrese la ubicación actual: ")
+            if sistema.actualizar_estado_envio(id_job, EstadoEnvio[nuevo_estado], ubicacion):
+                print("Estado actualizado con éxito")
+            else:
+                print("No se pudo actualizar el estado")
+        
+        elif opcion == "2":
+            pass
+        elif opcion == "3":
+            pass
+        elif opcion == "4":
             nombre = input("\nIngrese el nombre del empleado: ")
             rol = input("Ingrese el rol del empleado (TRANSPORTISTA/QUIMICO/GERENTE_COMERCIAL): ")
             if rol == "TRANSPORTISTA":
@@ -179,7 +261,7 @@ def menu_logistica(sistema):
                 continue
             sistema.agregar_usuario(nuevo_empleado)
             print(f"Nuevo empleado {nombre} ingresado como {rol}")
-        elif opcion == "2":
+        elif opcion == "5":
             break
         else:
             print("Opción no válida")
@@ -188,18 +270,41 @@ def menu_quimico(sistema, quimico):
     while True:
         print("\n--- Menú Químico ---")
         print("1. Editar estado del envío")
-        print("2. Salir")
+        print("2. Ver información del envío")
+        print("3. Salir")
         opcion = input("Seleccione una opción: ")
         
         if opcion == "1":
             id_job = input("Ingrese el ID del envío: ")
-            nuevo_estado = input("Ingrese el nuevo estado (RECIBIDO, EN_TRANSITO_AEREO, EN_TRANSITO_TERRESTRE, EN_CENTRO_LOGISTICO, EN_CAMINO, ENTREGADO): ")
+            if id_job in sistema.envios:
+                pass
+            else:
+                print(f'No se ha encontrado ningún envío con el {id_job}')
+                break
+            nuevo_estado = input("Ingrese el nuevo estado (RECIBIDO, EN_REPARTO_AEREO, VIAJANDO_A_TU_DESTINO, EN_CENTRO_LOGISTICO, EN_CAMINO_HACIA_TI, ENTREGADO): ") 
+            if nuevo_estado == "RECIBIDO":
+                pass
+            elif nuevo_estado == "EN_REPARTO_AEREO":
+                pass
+            elif nuevo_estado == "VIAJANDO_A_TU_DESTINO":
+                pass
+            elif nuevo_estado == "EN_CENTRO_LOGISTICO":
+                pass
+            elif nuevo_estado == "EN_CAMINO_HACIA_TI":
+                pass
+            elif nuevo_estado == "ENTREGADO":
+                pass
+            else:
+                print("Estado no válido")
+                continue
             ubicacion = input("Ingrese la ubicación actual: ")
             if sistema.actualizar_estado_envio(id_job, EstadoEnvio[nuevo_estado], ubicacion):
                 print("Estado actualizado con éxito")
             else:
                 print("No se pudo actualizar el estado")
         elif opcion == "2":
+            pass
+        elif opcion == "3":
             break
         else:
             print("Opción no válida")
@@ -207,9 +312,10 @@ def menu_quimico(sistema, quimico):
 def menu_gerente_comercial(sistema, gerente):
     while True:
         print("\n--- Menú Gerente Comercial ---")
-        print("1. Registrar nuevo cliente")
+        print("1. Ingresar nuevo cliente")
         print("2. Crear nuevo envío")
-        print("3. Salir")
+        print("3. Ver información del envío")
+        print("4. Salir")
         opcion = input("Seleccione una opción: ")
         
         if opcion == "1":
@@ -234,7 +340,7 @@ def menu_gerente_comercial(sistema, gerente):
             identificador_cliente = input("Ingrese el identificador del cliente: ")
             if identificador_cliente in sistema.clientes:
                 cliente = sistema.clientes[identificador_cliente]
-                guia_aerea = input("Ingrese el número de guía aérea: ")
+                guia_aerea = input("Ingrese el número de guía aérea(si aplica): ")
                 tipo_producto = input("Ingrese el tipo de producto: ")
                 destino = input("Ingrese el destino: ")
                 temperatura = input("Ingrese la temperatura requerida: ")
@@ -245,9 +351,13 @@ def menu_gerente_comercial(sistema, gerente):
             else:
                 print("Cliente no encontrado")
         elif opcion == "3":
+            pass
+        elif opcion == "4":
             break
         else:
             print("Opción no válida")
+
+
 
 def menu_principal():
     sistema = SistemaSeguimiento()
@@ -298,23 +408,76 @@ def menu_principal():
             else:
                 print("No hay personal químico registrado")
         elif opcion == "6":
-            if sistema.gerentes_comerciales:
-                print("\nGerentes Comerciales disponibles:")
-                for i, gerente in enumerate(sistema.gerentes_comerciales):
-                    print(f"{i+1}. {gerente.nombre}")
-                seleccion = int(input("Seleccione un Gerente Comercial: ")) - 1
-                if 0 <= seleccion < len(sistema.gerentes_comerciales):
-                    menu_gerente_comercial(sistema, sistema.gerentes_comerciales[seleccion])
+            if sistema.usuarios:
+                gerentes = [usuario for usuario in sistema.usuarios.values() if usuario.rol == Rol.GERENTE_COMERCIAL]
+                if gerentes:
+                    print("\nGerentes Comerciales disponibles:")
+                    for i, gerente in enumerate(gerentes):
+                        print(f"{i+1}. {gerente.nombre}")
+                    seleccion = int(input("Seleccione un Gerente Comercial: ")) - 1
+                    if 0 <= seleccion < len(gerentes):
+                        menu_gerente_comercial(sistema, gerentes[seleccion])
+                    else:
+                        print("Selección no válida")
                 else:
-                    print("Selección no válida")
+                    print("No hay Gerentes Comerciales registrados")
             else:
-                print("No hay Gerentes Comerciales registrados")
+                print("No hay usuarios registrados en el sistema")
         elif opcion == "7":
             print("Gracias por usar el Sistema de Seguimiento")
             break
         else:
             print("Opción no válida")
 
+def menu_gerente_comercial(sistema, gerente):
+    while True:
+        print("\n--- Menú Gerente Comercial ---")
+        print("1. Registrar nuevo cliente")
+        print("2. Crear nuevo envío")
+        print("3. Ver información de un envío")
+        print("4. Salir")
+        opcion = input("Seleccione una opción: ")
+        
+        if opcion == "1":
+            nombre = input("Ingrese el nombre del cliente: ")
+            identificador = input("Ingrese el identificador del cliente: ")
+            try:
+                numero = int(identificador)  
+            except ValueError:
+                print("Debes ingresar un valor numérico")
+                return
+            if identificador not in sistema.clientes:
+                nuevo_cliente = Cliente(nombre, identificador)
+                sistema.agregar_usuario(nuevo_cliente)
+                print(f"Nuevo cliente {nombre} ingresado")
+            else: 
+                print('El cliente ya se encuentra registrado')
+        elif opcion == "2":
+            identificador_cliente = input("Ingrese el identificador del cliente: ")
+            if identificador_cliente in sistema.clientes:
+                cliente = sistema.clientes[identificador_cliente]
+                guia_aerea = input("Ingrese el número de guía aérea: ")
+                tipo_producto = input("Ingrese el tipo de producto: ")
+                destino = input("Ingrese el destino: ")
+                temperatura = input("Ingrese la temperatura requerida: ")
+                hora_entrega = input("Ingrese la hora de entrega (YYYY-MM-DD HH:MM): ")
+                hora_entrega = datetime.datetime.strptime(hora_entrega, "%Y-%m-%d %H:%M")
+                id_job = sistema.crear_envio(guia_aerea, cliente, tipo_producto, destino, temperatura, hora_entrega)
+                print(f"Nuevo envío creado con ID: {id_job}")
+            else:
+                print("Cliente no encontrado")
+        elif opcion == "3":
+            id_job = input("Ingrese el ID del envío: ")
+            if id_job in sistema.envios:
+                pass
+            else:
+                print(f'No se ha encontrado ningún envío con el {id_job}')
+                break
+            print(sistema.obtener_info_envio(id_job))
+        elif opcion == "4":
+            break
+        else:
+            print("Opción no válida")
+
 if __name__ == "__main__":
     menu_principal()
-    
